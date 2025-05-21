@@ -49,21 +49,22 @@ uint32_t application_impl::app_counter__ = 0;
 std::mutex application_impl::app_counter_mutex__;
 
 application_impl::application_impl(const std::string &_name, const std::string &_path) :
-    runtime_ {runtime::get()}, client_ {VSOMEIP_CLIENT_UNSET}, session_ {0},
-    is_initialized_ {false}, name_ {_name}, path_ {_path},
-    work_ {std::make_shared<
+    runtime_(runtime::get()), client_(VSOMEIP_CLIENT_UNSET), session_(0), is_initialized_(false),
+    name_(_name), path_(_path),
+    work_(std::make_shared<
             boost::asio::executor_work_guard<boost::asio::io_context::executor_type>>(
-            io_.get_executor())},
-    routing_ {nullptr}, state_ {state_type_e::ST_DEREGISTERED},
-    security_mode_ {security_mode_e::SM_ON},
+            io_.get_executor())),
+    routing_(nullptr), state_(state_type_e::ST_DEREGISTERED), security_mode_(security_mode_e::SM_ON),
 #ifdef VSOMEIP_ENABLE_SIGNAL_HANDLING
-    signals_ {io_, SIGINT, SIGTERM}, catched_signal_ {false},
+    signals_(io_, SIGINT, SIGTERM), catched_signal_(false),
 #endif
-    is_dispatching_ {false}, max_dispatchers_ {VSOMEIP_DEFAULT_MAX_DISPATCHERS},
-    max_dispatch_time_ {VSOMEIP_DEFAULT_MAX_DISPATCH_TIME}, dispatcher_counter_ {0},
-    max_detached_thread_wait_time {VSOMEIP_MAX_WAIT_TIME_DETACHED_THREADS}, stopped_ {false},
-    block_stopping_ {false}, is_routing_manager_host_ {false}, stopped_called_ {false},
-    watchdog_timer_ {io_}, client_side_logging_ {false}, has_session_handling_ {true} { }
+    is_dispatching_(false), max_dispatchers_(VSOMEIP_MAX_DISPATCHERS),
+    max_dispatch_time_(VSOMEIP_MAX_DISPATCH_TIME), dispatcher_counter_(0),
+    max_detached_thread_wait_time(VSOMEIP_MAX_WAIT_TIME_DETACHED_THREADS), stopped_(false),
+    block_stopping_(false), is_routing_manager_host_(false), stopped_called_(false),
+    watchdog_timer_(io_), client_side_logging_(false), has_session_handling_(true)
+{
+}
 
 application_impl::~application_impl() {
     runtime_->remove_application(name_);
@@ -392,8 +393,6 @@ void application_impl::start() {
 
     const size_t io_thread_count = configuration_->get_io_thread_count(name_);
     const int io_thread_nice_level = configuration_->get_io_thread_nice_level(name_);
-    // Amount of time to run the IO context.
-    const size_t event_loop_periodicity = configuration_->get_event_loop_periodicity(name_);
     {
         std::lock_guard<std::mutex> its_lock(start_stop_mutex_);
         if (io_.stopped()) {
@@ -420,7 +419,7 @@ void application_impl::start() {
 #if defined(__linux__) || defined(ANDROID) || defined(__QNX__)
                 << " I/O nice " << io_thread_nice_level
 #endif
-                << " boost event loop period " << event_loop_periodicity;
+        ;
 
         start_caller_id_ = std::this_thread::get_id();
         {
@@ -446,7 +445,7 @@ void application_impl::start() {
             routing_->start();
 
         for (size_t i = 0; i < io_thread_count - 1; i++) {
-            auto its_thread = std::make_shared<std::thread>([this, i, io_thread_nice_level, event_loop_periodicity] {
+            auto its_thread = std::make_shared<std::thread>([this, i, io_thread_nice_level] {
                     VSOMEIP_INFO << "io thread id from application: "
                             << std::hex << std::setfill('0') << std::setw(4)
                             << client_ << " (" << name_ << ") is: " << std::hex
@@ -466,14 +465,8 @@ void application_impl::start() {
 #endif
                     while(true) {
                         try {
-                            if (event_loop_periodicity) {
-                                io_.run_for(std::chrono::seconds(event_loop_periodicity));
-                            } else {
-                                io_.run();
-                            }
-                            if (stopped_) {
-                                break;
-                            }
+                            io_.run();
+                            break;
                         } catch (const std::exception &e) {
                             VSOMEIP_ERROR << "application_impl::start() "
                                     "caught exception: " << e.what();
@@ -510,17 +503,11 @@ void application_impl::start() {
     utility::set_thread_niceness(io_thread_nice_level);
     while(true) {
         try {
-            if (event_loop_periodicity) {
-                io_.run_for(std::chrono::seconds(event_loop_periodicity));
-            } else {
-                io_.run();
+            io_.run();
+            if (stop_thread_.joinable()) {
+                stop_thread_.join();
             }
-            if (stopped_) {
-                if (stop_thread_.joinable()) {
-                    stop_thread_.join();
-                }
-                break;
-            }
+            break;
         } catch (const std::exception &e) {
             VSOMEIP_ERROR << "application_impl::start() caught exception: " << e.what();
         }
@@ -655,13 +642,9 @@ void application_impl::subscribe(service_t _service, instance_t _instance,
         }
 
         if (check_subscription_state(_service, _instance, _eventgroup, _event)) {
-            // Get configured, application-specific filter
-            auto its_filter {
-                configuration_->get_debounce(get_client(), _service, _instance, _event)};
-
             routing_->subscribe(client_, &sec_client_,
                     _service, _instance, _eventgroup, _major,
-                    _event, its_filter);
+                    _event, nullptr);
         }
     }
 }
@@ -3036,6 +3019,7 @@ void application_impl::subscribe_with_debounce(service_t _service, instance_t _i
         }
 
         if (check_subscription_state(_service, _instance, _eventgroup, _event)) {
+
             auto its_filter = std::make_shared<debounce_filter_impl_t>(_filter);
             routing_->subscribe(client_, get_sec_client(),
                     _service, _instance, _eventgroup, _major,

@@ -34,7 +34,7 @@
             "unreliable":"30001",
             "reliable":
             {
-                "port":"34511",
+                "port":"40001",
                 "enable-magic-cookies":"false"
             },
             "events" :
@@ -52,7 +52,7 @@
             "unreliable":"30002",
             "reliable":
             {
-                "port":"34512",
+                "port":"40002",
                 "enable-magic-cookies":"false"
             },
             "events" :
@@ -70,7 +70,7 @@
             "unreliable":"30003",
             "reliable":
             {
-                "port":"34513",
+                "port":"40003",
                 "enable-magic-cookies":"false"
             },
             "events" :

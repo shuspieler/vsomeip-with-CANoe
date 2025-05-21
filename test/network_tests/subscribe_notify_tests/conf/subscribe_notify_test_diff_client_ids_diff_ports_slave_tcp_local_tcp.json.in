@@ -33,7 +33,7 @@
             "instance":"0x0001",
             "reliable":
             {
-                "port":"34514",
+                "port":"40004",
                 "enable-magic-cookies":"false"
             }
         },
@@ -42,7 +42,7 @@
             "instance":"0x0001",
             "reliable":
             {
-                "port":"34515",
+                "port":"40005",
                 "enable-magic-cookies":"false"
             }
         },
@@ -51,7 +51,7 @@
             "instance":"0x0001",
             "reliable":
             {
-                "port":"34516",
+                "port":"40006",
                 "enable-magic-cookies":"false"
             }
         }
@@ -62,11 +62,11 @@
         {
             "name" : "subscribe_notify_test_service_four",
             "unicast" : "127.0.0.1",
-            "port" : "31000"
+            "port" : "44000"
         },
         "guests" :
         {
-            "ports" : [ { "first" : "31002", "last" : "31007" } ]
+            "ports" : [ { "first" : "44100", "last" : "44105" } ]
         }
     },
     "service-discovery":

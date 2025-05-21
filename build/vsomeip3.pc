@@ -1,0 +1,10 @@
+prefix=/home/v2x/Shu/install_folder
+exec_prefix=/home/v2x/Shu/install_folder
+libdir=/home/v2x/Shu/install_folder/lib
+includedir=/home/v2x/Shu/install_folder/include
+
+Name: vsomeip
+Description: New SOME/IP stack, feature complete
+Version: 3.5.5
+Libs: -L${libdir} -lvsomeip3
+Cflags: -I${includedir}

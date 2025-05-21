@@ -1516,18 +1516,14 @@ void service_discovery_impl::process_offerservice_serviceentry(
 
     if (_sd_ac_state.sd_acceptance_required_) {
 
-        auto expire_subscriptions_and_services = [this, &_sd_ac_state, _service, _instance](
-                                                         const boost::asio::ip::address& _address,
-                                                         std::uint16_t _port, bool _reliable) {
+        auto expire_subscriptions_and_services =
+                [this, &_sd_ac_state](const boost::asio::ip::address& _address,
+                                      std::uint16_t _port, bool _reliable) {
             const auto its_port_pair = std::make_pair(_reliable, _port);
             if (_sd_ac_state.expired_ports_.find(its_port_pair) ==
                     _sd_ac_state.expired_ports_.end()) {
-                VSOMEIP_WARNING << "service_discovery_impl::process_offerservice_serviceentry"
-                        << ": Do not accept offer ["
-                        << std::hex << std::setfill('0')
-                        << std::setw(4) << _service << "."
-                        << std::setw(4) << _instance << "]"
-                        << " from "
+                VSOMEIP_WARNING << "service_discovery_impl::" << __func__
+                        << ": Do not accept offer from "
                         << _address.to_string() << ":"
                         << std::dec << _port << " reliable=" << _reliable;
                 remove_remote_offer_type_by_ip(_address, _port, _reliable);
@@ -2450,9 +2446,15 @@ void service_discovery_impl::handle_eventgroup_subscription(
     } else {
         boost::asio::ip::address its_first_address, its_second_address;
         if (ILLEGAL_PORT != _first_port) {
+            uint16_t its_first_port(0);
             its_subscriber = endpoint_definition::get(
                     _first_address, _first_port, _is_first_reliable, _service, _instance);
-            if (_is_first_reliable) { // tcp unicast
+            if (!_is_first_reliable &&
+                _info->get_multicast(its_first_address, its_first_port) &&
+                _info->is_sending_multicast()) { // udp multicast
+                its_unreliable = endpoint_definition::get(
+                    its_first_address, its_first_port, false, _service, _instance);
+            } else if (_is_first_reliable) { // tcp unicast
                 its_reliable = its_subscriber;
                 // check if TCP connection is established by client
                 if (_ttl > 0 && !is_tcp_connected(_service, _instance, its_reliable)) {
@@ -2474,9 +2476,15 @@ void service_discovery_impl::handle_eventgroup_subscription(
         }
 
         if (ILLEGAL_PORT != _second_port) {
+            uint16_t its_second_port(0);
             its_subscriber = endpoint_definition::get(
                     _second_address, _second_port, _is_second_reliable, _service, _instance);
-            if (_is_second_reliable) { // tcp unicast
+            if (!_is_second_reliable &&
+                _info->get_multicast(its_second_address, its_second_port) &&
+                _info->is_sending_multicast()) { // udp multicast
+                its_unreliable = endpoint_definition::get(
+                    its_second_address, its_second_port, false, _service, _instance);
+            } else if (_is_second_reliable) { // tcp unicast
                 its_reliable = its_subscriber;
                 // check if TCP connection is established by client
                 if (_ttl > 0 && !is_tcp_connected(_service, _instance, its_reliable)) {

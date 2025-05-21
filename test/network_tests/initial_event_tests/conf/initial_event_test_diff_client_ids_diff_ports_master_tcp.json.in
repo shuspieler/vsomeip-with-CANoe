@@ -33,7 +33,7 @@
             "instance":"0x0001",
             "reliable":
             {
-                "port":"34511",
+                "port":"40001",
                 "enable-magic-cookies":"false"
             }
         },
@@ -42,7 +42,7 @@
             "instance":"0x0001",
             "reliable":
             {
-                "port":"34512",
+                "port":"40002",
                 "enable-magic-cookies":"false"
             }
         },
@@ -51,7 +51,7 @@
             "instance":"0x0001",
             "reliable":
             {
-                "port":"34513",
+                "port":"40003",
                 "enable-magic-cookies":"false"
             }
         },

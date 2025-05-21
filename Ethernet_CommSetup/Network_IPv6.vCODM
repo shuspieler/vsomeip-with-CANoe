@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FunctionBusLibrary Version="46" FormatMajorVersion="3">
+  <Namespaces>
+    <Namespace IsDefinedAsHidden="False" IsSystemDefined="False" Name="DataTypes">
+      <DataTypes>
+        <StructDataType Bitcount="48" RawBitcount="48" HasFixedBinaryLayout="True" HasMotorolaByteOrder="False" Name="DetectedTrafficSign">
+          <Fields>
+            <DataTypeField RelativeBitOffset="0" IsOptional="False" IsHidden="False" Name="SignType">
+              <DataType DataType="_SystemDataTypes::UInt8">
+                <NumericProperties MinValue="0" MinValueType="UInt64" MaxValue="13" MaxValueType="UInt64" IsBoolean="False" IsTimespan="False">
+                  <ImplToPhysEncodings TextualEncodings="Encodings::signType_cm" />
+                </NumericProperties>
+              </DataType>
+            </DataTypeField>
+            <DataTypeField RelativeBitOffset="0" IsOptional="False" IsHidden="False" Name="DistanceToSign">
+              <DataType DataType="_SystemDataTypes::UInt32">
+                <NumericProperties MinValue="-1000000" MinValueType="Double" MaxValue="-1000000" MaxValueType="Double" IsBoolean="False" IsTimespan="False">
+                  <ImplToPhysEncodings LinearEncodings="Encodings::Distance_Linear" TextualEncodings="Encodings::Distance_Textual" />
+                </NumericProperties>
+              </DataType>
+            </DataTypeField>
+            <DataTypeField RelativeBitOffset="0" IsOptional="False" IsHidden="False" Name="Reliability">
+              <DataType DataType="_SystemDataTypes::UInt8" />
+            </DataTypeField>
+          </Fields>
+        </StructDataType>
+        <ArrayDataType MaxLength="3" MinLength="3" HasMaxLength="True" HasFixedBinaryLayout="True" HasMotorolaByteOrder="False" Name="DetectedTrafficSigns">
+          <BaseType DataType="DataTypes::DetectedTrafficSign" />
+        </ArrayDataType>
+        <StructDataType Bitcount="144" RawBitcount="144" HasFixedBinaryLayout="True" HasMotorolaByteOrder="False" Name="TrafficSignDetection">
+          <Fields>
+            <DataTypeField RelativeBitOffset="0" IsOptional="False" IsHidden="False" Name="DetectedTrafficSign">
+              <DataType DataType="DataTypes::DetectedTrafficSigns" />
+            </DataTypeField>
+          </Fields>
+        </StructDataType>
+        <Class Type="CTInterface" AllowSpecialCharactersInMemberNames="False" Bitcount="0" RawBitcount="0" HasFixedBinaryLayout="False" HasMotorolaByteOrder="False" Name="ADASDisplayInfo">
+          <Fields>
+            <DataTypeField RelativeBitOffset="0" IsOptional="False" IsHidden="False" Name="TrafficSignDetection">
+              <DataType DataType="DataTypes::TrafficSignDetection" />
+            </DataTypeField>
+          </Fields>
+        </Class>
+      </DataTypes>
+    </Namespace>
+    <Namespace IsDefinedAsHidden="False" IsSystemDefined="False" Name="CommunicationObjects">
+      <CommunicationObjects>
+        <Service Interface="DataTypes::ADASDisplayInfo" SDServerModelsActive="True" SDServerModelsProvideServiceAtMeasurementStart="True" SDClientServerModelsActive="True" SDClientServerModelsRequestServiceAtMeasurementStart="True" UsageType="SUTCommunication" CommunicationType="PointToPoint" Provider="Manual" HasDynamicFEPs="False" IsHidden="False" Name="ADASDisplayInfo">
+          <AdditionalInfo>
+            <AutosarImporterProvider AutosarInfo="/Vector/Vehicle_Ethernet/adas_channel/socket_address_camf_adas_aep/camf_adas_aep/ADASDisplayInfo" Provider="AutosarImporter" Creator="AutosarImporter" />
+            <AutosarImporterProvider AutosarInfo="/Vector/Vehicle_Ethernet/adas_channel/socket_address_adas_adas_aep/adas_adas_aep/adas_adas_display_info_csi" Provider="AutosarImporter" Creator="AutosarImporter" />
+          </AdditionalInfo>
+          <SourceFEPs>
+            <ServiceFEP SDModelActive="True" SDModelProvideServiceAtMeasurementStart="True" InheritSDModelParameters="True" State="Real" Provider="Manual" IsInTool="True" IsActive="True" GenerateDotNetAPI="False" IsVisible="False" AssociatedRuntimeKernel="0" Name="ADAS">
+              <AdditionalInfo>
+                <AutosarImporterProvider AutosarInfo="/Vector/ECUs/ADAS/adas_adas_connector" Provider="AutosarImporter" Creator="AutosarImporter" />
+              </AdditionalInfo>
+            </ServiceFEP>
+          </SourceFEPs>
+          <TargetFEPs>
+            <ServiceFEP SDModelActive="True" SDModelProvideServiceAtMeasurementStart="True" InheritSDModelParameters="True" State="Real" Provider="Manual" IsInTool="True" IsActive="True" GenerateDotNetAPI="False" IsVisible="False" AssociatedRuntimeKernel="0" Name="CAMF">
+              <AdditionalInfo>
+                <AutosarImporterProvider AutosarInfo="/Vector/ECUs/CAMF/camf_adas_connector" Provider="AutosarImporter" Creator="AutosarImporter" />
+              </AdditionalInfo>
+            </ServiceFEP>
+          </TargetFEPs>
+          <Timings />
+          <Events>
+            <Signal UsageType="SubObject" CommunicationType="PointToPoint" Provider="Manual" HasDynamicFEPs="False" IsHidden="False" Name="TrafficSignDetection">
+              <AdditionalInfo>
+                <AutosarImporterProvider AutosarInfo="/Vector/SystemSignals/TrafficSignDetectionSerialized" Provider="AutosarImporter" Creator="AutosarImporter" />
+              </AdditionalInfo>
+              <SourceFEPs>
+                <SignalFEP State="Real" IsInTool="True" IsActive="True" GenerateDotNetAPI="False" IsVisible="False" AssociatedRuntimeKernel="0" Name="CAMF">
+                  <DataType DataType="DataTypes::TrafficSignDetection" />
+                </SignalFEP>
+              </SourceFEPs>
+              <TargetFEPs>
+                <SignalFEP State="Real" IsInTool="True" IsActive="True" GenerateDotNetAPI="False" IsVisible="False" AssociatedRuntimeKernel="0" Name="ADAS">
+                  <DataType DataType="DataTypes::TrafficSignDetection" />
+                </SignalFEP>
+              </TargetFEPs>
+              <Timings />
+              <DataType DataType="DataTypes::TrafficSignDetection" />
+            </Signal>
+          </Events>
+        </Service>
+      </CommunicationObjects>
+    </Namespace>
+    <Namespace IsDefinedAsHidden="False" IsSystemDefined="False" Name="BindingInfo">
+      <AdditionalInfo>
+        <SOMEIPBinding SimulationChannel="1" Provider="SOMEIP" Creator="Importer">
+          <FEPConfigs>
+            <ServerFEPConfig InstanceId="1" SDConfig="BindingInfo::adas_channel_ADASDisplayInfo_SdServerConfig" FEP="CommunicationObjects::ADASDisplayInfo[CAMF]" UnreliableAEP="BindingInfo::camf_adas_connector_NEP2_newAEP2" />
+            <ClientFEPConfig ClientId="0" SDConfig="BindingInfo::adas_channel_adas_adas_display_info_csi_SdClientConfig" FEP="CommunicationObjects::ADASDisplayInfo[ADAS]" UnreliableAEP="BindingInfo::adas_adas_connector_NEP2_newAEP2">
+              <ClientServerEventGroupSubscription IsActive="True">
+                <SubscribedEventGroups>
+                  <SubscribedEventGroup EventGroupConfig="BindingInfo::ADASDisplayInfo_SOMEIP_ServiceConfig::adas_channel_adas_adas_display_info_ceg" />
+                </SubscribedEventGroups>
+              </ClientServerEventGroupSubscription>
+            </ClientFEPConfig>
+          </FEPConfigs>
+          <ServiceConfigs>
+            <ServiceConfig Service="CommunicationObjects::ADASDisplayInfo" ServiceId="2001" HasMajorVersionValue="True" MajorVersion="1" HasMinorVersionValue="True" MinorVersion="0" Name="ADASDisplayInfo_SOMEIP_ServiceConfig">
+              <EventConfigs>
+                <EventConfig Event="CommunicationObjects::ADASDisplayInfo.TrafficSignDetection" EventId="32868" Provider="SOMEIP" Creator="Undefined">
+                  <EventPDU HasReliableValue="True" Reliable="False" />
+                </EventConfig>
+              </EventConfigs>
+              <EventGroupConfigs>
+                <EventGroupConfig EventGroupId="1" MulticastThreshold="0" HasEventGroupControlTypeValue="True" EventGroupControlType="ActivationUnicast" Name="adas_channel_adas_adas_display_info_ceg">
+                  <EventGroupMembers>
+                    <EventGroupMember Event="CommunicationObjects::ADASDisplayInfo.TrafficSignDetection" />
+                  </EventGroupMembers>
+                </EventGroupConfig>
+              </EventGroupConfigs>
+            </ServiceConfig>
+          </ServiceConfigs>
+          <SDServerConfigs>
+            <SDServerConfig OfferCycleTime="20000000" TTL="3" InitialRepetitionsBaseDelay="1000000" InitialRepetitionsMax="3" Name="adas_channel_ADASDisplayInfo_SdServerConfig" />
+          </SDServerConfigs>
+          <SDClientConfigs>
+            <SDClientConfig TTL="3" InitialRepetitionsBaseDelay="1000000" InitialRepetitionsMax="3" Name="adas_channel_adas_adas_display_info_csi_SdClientConfig" />
+          </SDClientConfigs>
+          <TransformationConfigs>
+            <TransformationConfig HasAlignmentValue="True" Alignment="1" HasByteOrderValue="True" ByteOrder="Intel" Name="DefaultTransformationConfig">
+              <StaticStringConfig HasBOMValue="True" BOM="True" HasStringEscapingTypeValue="True" StringEscapingType="VALUE_0" LengthFieldSize="0" />
+              <DynamicStringConfig HasBOMValue="True" BOM="True" HasStringEscapingTypeValue="True" StringEscapingType="VALUE_0" LengthFieldSize="4" />
+              <StaticArrayConfig LengthFieldSize="0" />
+              <DynamicArrayConfig LengthFieldSize="4" />
+              <UnionConfig SelectorFieldSize="4" LengthFieldSize="0" />
+              <StructConfig LengthFieldSize="0" />
+            </TransformationConfig>
+          </TransformationConfigs>
+          <DefaultSettings SDServerConfig="BindingInfo::adas_channel_ADASDisplayInfo_SdServerConfig" SDClientConfig="BindingInfo::adas_channel_adas_adas_display_info_csi_SdClientConfig" DefaultSerializationConfig="BindingInfo::DefaultTransformationConfig" />
+          <GlobalSettings>
+            <GlobalSOMEIPBindingSettings />
+          </GlobalSettings>
+        </SOMEIPBinding>
+        <CommonBindingApi Provider="BindingCommon" Creator="Importer">
+          <CommonPDUs>
+            <CommonPDUApi />
+          </CommonPDUs>
+          <CommonSecOC>
+            <CommonSecOCApi />
+          </CommonSecOC>
+          <CommonE2E>
+            <CommonE2EApi />
+          </CommonE2E>
+          <CommonIP>
+            <CommonIPApi>
+              <VLANs>
+                <Vlan VlanId="3" Name="VLAN_ADAS" />
+              </VLANs>
+              <IpStacks>
+                <IpStack DefaultTTL="64" DefaultTTLMulticast="1" UseFlowLabel="True" EnableIpForwarding="False" EnableTcpTimestampOption="True" TcpDelayedAcknowledge="True" Name="ADAS">
+                  <NetworkInterfaces>
+                    <NetworkInterface MacAddress="c8:5e:a9:d0:d4:46" MTU="1500" Name="adas_adas_connector" />
+                  </NetworkInterfaces>
+                </IpStack>
+                <IpStack DefaultTTL="64" DefaultTTLMulticast="1" UseFlowLabel="True" EnableIpForwarding="False" EnableTcpTimestampOption="True" TcpDelayedAcknowledge="True" Name="CAMF">
+                  <NetworkInterfaces>
+                    <NetworkInterface MacAddress="02:00:00:00:01:06" MTU="1500" Name="camf_adas_connector" />
+                  </NetworkInterfaces>
+                </IpStack>
+              </IpStacks>
+              <NEPs>
+                <UnicastNEP NetworkAdapter="BindingInfo::ADAS::adas_adas_connector" Name="adas_adas_connector_NEP2">
+                  <StaticIpConfig IpAddress="2408:8806:53:3ae0:1042:6d3c:e8e0:6731" Prefix="64" Priority="0" />
+                </UnicastNEP>
+                <UnicastNEP NetworkAdapter="BindingInfo::CAMF::camf_adas_connector" Name="camf_adas_connector_NEP2">
+                  <StaticIpConfig IpAddress="2408:8806:53:3ae0:1042:6d3c:e8e0:2000" Prefix="64" Priority="0" />
+                </UnicastNEP>
+              </NEPs>
+              <AEPs>
+                <AEP Protocol="UDP" Port="0" HasIsTCPServerValue="False" NEP="BindingInfo::adas_adas_connector_NEP2" Name="adas_adas_connector_NEP2_newAEP2" />
+                <AEP Protocol="UDP" Port="30500" HasIsTCPServerValue="False" NEP="BindingInfo::camf_adas_connector_NEP2" Name="camf_adas_connector_NEP2_newAEP2" />
+              </AEPs>
+            </CommonIPApi>
+          </CommonIP>
+          <CommonSignalGroup>
+            <CommonSignalGroupApi />
+          </CommonSignalGroup>
+          <CommonTls>
+            <CommonTlsApi />
+          </CommonTls>
+        </CommonBindingApi>
+      </AdditionalInfo>
+    </Namespace>
+    <Namespace IsDefinedAsHidden="False" IsSystemDefined="False" Name="Participants">
+      <Participants>
+        <Participant Provider="SUTConfiguration" IsInTool="False" Name="CAMF">
+          <AssignedFEPs>
+            <AssignedFEP FunctionalEndPoint="CommunicationObjects::ADASDisplayInfo[CAMF]" />
+          </AssignedFEPs>
+        </Participant>
+        <Participant Provider="SUTConfiguration" IsInTool="False" Name="ADAS">
+          <AssignedFEPs>
+            <AssignedFEP FunctionalEndPoint="CommunicationObjects::ADASDisplayInfo[ADAS]" />
+          </AssignedFEPs>
+        </Participant>
+      </Participants>
+    </Namespace>
+    <Namespace IsDefinedAsHidden="False" IsSystemDefined="False" Name="Encodings">
+      <LinearEncodings>
+        <LinearEncodings Name="Temperature">
+          <LinearEncoding Factor="0.1" Offset="-273.15" Unit="°C" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </LinearEncodings>
+        <LinearEncodings Name="Speed">
+          <LinearEncoding Factor="0.1" Offset="0" Unit="km/h" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </LinearEncodings>
+        <LinearEncodings Name="Distance_Linear">
+          <LinearEncoding Factor="0.1" Offset="-1000000" Unit="m" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </LinearEncodings>
+        <LinearEncodings Name="Current">
+          <LinearEncoding Factor="0.001" Offset="-1000" Unit="A" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </LinearEncodings>
+        <LinearEncodings Name="Power">
+          <LinearEncoding Factor="0.001" Offset="-1000" Unit="kW" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </LinearEncodings>
+        <LinearEncodings Name="Capacity">
+          <LinearEncoding Factor="0.001" Offset="0" Unit="kWh" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </LinearEncodings>
+      </LinearEncodings>
+      <TextualEncodings>
+        <TextualEncodings DefinesMinMax="False" Name="Distance_Textual">
+          <TextualEncoding TextualValue="NoDistance" DisplayValue="NoDistance" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+        </TextualEncodings>
+        <TextualEncodings DefinesMinMax="False" Name="signType_cm">
+          <TextualEncoding TextualValue="NoObject" DisplayValue="NoObject" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="SpeedLimit30Sign" DisplayValue="SpeedLimit30Sign" LowerBound="1" LowerBoundType="UInt32" UpperBound="1" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="SpeedLimit50Sign" DisplayValue="SpeedLimit50Sign" LowerBound="2" LowerBoundType="UInt32" UpperBound="2" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="SpeedLimit60Sign" DisplayValue="SpeedLimit60Sign" LowerBound="3" LowerBoundType="UInt32" UpperBound="3" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="SpeedLimit70Sign" DisplayValue="SpeedLimit70Sign" LowerBound="4" LowerBoundType="UInt32" UpperBound="4" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="SpeedLimit80Sign" DisplayValue="SpeedLimit80Sign" LowerBound="5" LowerBoundType="UInt32" UpperBound="5" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="SpeedLimit100Sign" DisplayValue="SpeedLimit100Sign" LowerBound="6" LowerBoundType="UInt32" UpperBound="6" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="NoLimit80Sign" DisplayValue="NoLimit80Sign" LowerBound="7" LowerBoundType="UInt32" UpperBound="7" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="NoPassingZoneSign" DisplayValue="NoPassingZoneSign" LowerBound="8" LowerBoundType="UInt32" UpperBound="8" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="NoPassingZoneEndSign" DisplayValue="NoPassingZoneEndSign" LowerBound="9" LowerBoundType="UInt32" UpperBound="9" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="HazardSign" DisplayValue="HazardSign" LowerBound="10" LowerBoundType="UInt32" UpperBound="10" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="HazardEndSign" DisplayValue="HazardEndSign" LowerBound="11" LowerBoundType="UInt32" UpperBound="11" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="RoadworkSign" DisplayValue="RoadworkSign" LowerBound="12" LowerBoundType="UInt32" UpperBound="12" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="RoadworkEndSign" DisplayValue="RoadworkEndSign" LowerBound="13" LowerBoundType="UInt32" UpperBound="13" UpperBoundType="UInt32" />
+        </TextualEncodings>
+        <TextualEncodings DefinesMinMax="False" Name="activate_cm">
+          <TextualEncoding TextualValue="Deactivate" DisplayValue="Deactivate" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="Activate" DisplayValue="Activate" LowerBound="1" LowerBoundType="UInt32" UpperBound="1" UpperBoundType="UInt32" />
+        </TextualEncodings>
+        <TextualEncodings DefinesMinMax="False" Name="activate_result_cm">
+          <TextualEncoding TextualValue="Failed" DisplayValue="Failed" LowerBound="0" LowerBoundType="UInt32" UpperBound="0" UpperBoundType="UInt32" />
+          <TextualEncoding TextualValue="Success" DisplayValue="Success" LowerBound="1" LowerBoundType="UInt32" UpperBound="1" UpperBoundType="UInt32" />
+        </TextualEncodings>
+      </TextualEncodings>
+    </Namespace>
+  </Namespaces>
+  <Bindings>
+    <Binding Provider="SUTConfiguration" Type="Abstract" IsActive="False" CommunicationObject="CommunicationObjects::ADASDisplayInfo" IsCallReturnBinding="False" />
+    <Binding Provider="SUTConfiguration" Type="SOMEIP" IsActive="True" CommunicationObject="CommunicationObjects::ADASDisplayInfo" IsCallReturnBinding="False" />
+  </Bindings>
+</FunctionBusLibrary>

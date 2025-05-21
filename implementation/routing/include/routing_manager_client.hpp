@@ -285,7 +285,7 @@ private:
     std::mutex pending_event_registrations_mutex_;
     std::set<event_data_t> pending_event_registrations_;
 
-    std::mutex incoming_subscriptions_mutex_;
+    std::recursive_mutex incoming_subscriptions_mutex_;
     std::map<client_t, std::set<subscription_data_t>> pending_incoming_subscriptions_;
 
     std::mutex state_condition_mutex_;
@@ -299,7 +299,7 @@ private:
     boost::asio::steady_timer register_application_timer_;
 
     boost::asio::steady_timer request_debounce_timer_;
-    std::atomic<bool> request_debounce_timer_running_;
+    bool request_debounce_timer_running_;
 
     const bool client_side_logging_;
     const std::set<std::tuple<service_t, instance_t> > client_side_logging_filter_;

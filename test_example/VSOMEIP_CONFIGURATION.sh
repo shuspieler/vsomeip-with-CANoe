@@ -1,0 +1,1 @@
+export VSOMEIP_CONFIGURATION=vsomeip.json

@@ -170,8 +170,8 @@ void local_tcp_client_endpoint_impl::connect() {
             return;
         }
         state_ = cei_state_e::CONNECTING;
-        connecting_timer_state_ = connecting_timer_state_e::IN_PROGRESS;
         start_connecting_timer();
+        connecting_timer_state_ = connecting_timer_state_e::IN_PROGRESS;
         socket_->async_connect(
             remote_,
             strand_.wrap(
@@ -258,23 +258,21 @@ void local_tcp_client_endpoint_impl::send_queued(std::pair<message_buffer_ptr_t,
 
     {
         std::lock_guard<std::mutex> its_lock(socket_mutex_);
-        if(socket_->is_open()) {
-            boost::asio::async_write(
-                *socket_,
-                bufs,
-                strand_.wrap(
-                    std::bind(
-                        &client_endpoint_impl::send_cbk,
-                        std::dynamic_pointer_cast<
+        boost::asio::async_write(
+            *socket_,
+            bufs,
+            strand_.wrap(
+                std::bind(
+                    &client_endpoint_impl::send_cbk,
+                    std::dynamic_pointer_cast<
                         local_tcp_client_endpoint_impl
-                        >(shared_from_this()),
-                        std::placeholders::_1,
-                        std::placeholders::_2,
-                        _entry.first
-                    )
+                    >(shared_from_this()),
+                    std::placeholders::_1,
+                    std::placeholders::_2,
+                    _entry.first
                 )
-            );
-        }
+            )
+        );
     }
 }
 

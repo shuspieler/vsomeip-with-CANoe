@@ -25,7 +25,7 @@
             "service":"0x3344",
             "instance":"0x0001",
             "reliable": {
-                "port":"34511",
+                "port":"40001",
                 "enable-magic-cookies":"false"
             }
         }

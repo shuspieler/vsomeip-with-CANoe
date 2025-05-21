@@ -658,14 +658,6 @@ void routing_manager_stub::on_message(const byte_t *_data, length_t _size,
                             r.service_, r.instance_, r.major_, r.minor_);
                         its_allowed_requests.insert(r);
                     }
-                    else {
-                        VSOMEIP_WARNING << std::hex << std::setfill('0')
-                                    << "vSomeIP Security: Client 0x" << std::setw(4) << get_client()
-                                    << " received a request from client 0x" << std::setw(4) << its_client
-                                    << " to service/instance "
-                                    << r.service_ << "/" << r.instance_
-                                    << " ~> skip message!";
-                    }
                 }
                 if (configuration_->is_security_enabled()) {
                     handle_credentials(its_client, its_allowed_requests);
@@ -1200,19 +1192,6 @@ void routing_manager_stub::on_net_state_change(bool _is_interface, const std::st
                 VSOMEIP_INFO << __func__
                         << ": Stopping routing root.";
                 root_->stop();
-                root_.reset();
-
-                std::unordered_set<client_t> its_clients_to_inform;
-                auto its_epm = host_->get_endpoint_manager();
-                if (its_epm) {
-                    its_clients_to_inform = its_epm->get_connected_clients();
-                }
-
-                for (const auto client : its_clients_to_inform) {
-                    if (client != VSOMEIP_ROUTING_CLIENT) {
-                        host_->remove_local(client, false);
-                    }
-                }
 
                 std::scoped_lock its_lock(routing_info_mutex_);
                 routing_info_.clear();
@@ -1227,9 +1206,11 @@ void routing_manager_stub::on_net_state_change(bool _is_interface, const std::st
 void routing_manager_stub::on_offer_service(client_t _client,
         service_t _service, instance_t _instance, major_version_t _major, minor_version_t _minor) {
 
-    VSOMEIP_DEBUG << "ON_OFFER_SERVICE(" << std::hex << std::setfill('0') << std::setw(4) << _client
-                  << "): [" << std::setw(4) << _service << "." << std::setw(4) << _instance << ":"
-                  << std::dec << static_cast<int>(_major) << "." << _minor << "]";
+    VSOMEIP_INFO << "routing_manager_stub::" << __func__ << ": ON_OFFER_SERVICE("
+        << std::hex << std::setw(4) << std::setfill('0') << _client <<"): ["
+        << std::hex << std::setw(4) << std::setfill('0') << _service << "."
+        << std::hex << std::setw(4) << std::setfill('0') << _instance
+        << ":" << std::dec << int(_major) << "." << std::dec << _minor << "]";
 
     if (_client == host_->get_client()) {
         create_local_receiver();

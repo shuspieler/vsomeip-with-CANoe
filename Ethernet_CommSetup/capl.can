@@ -1,0 +1,13 @@
+/*@!Encoding:1252*/
+on key 'a'
+{
+  $CommunicationObjects::ADASDisplayInfo.providerSide[CAMF].TrafficSignDetection.DetectedTrafficSign[1].SignType.phys = 5;
+  $CommunicationObjects::ADASDisplayInfo.providerSide[CAMF].TrafficSignDetection.DetectedTrafficSign[1].DistanceToSign.phys = 500;
+  $CommunicationObjects::ADASDisplayInfo.providerSide[CAMF].TrafficSignDetection.DetectedTrafficSign[1].Reliability.phys = 50;
+  write("Button A.");
+}
+
+on value_update CommunicationObjects::ADASDisplayInfo.consumerSide[ADAS,CAMF].TrafficSignDetection.DetectedTrafficSign[1].DistanceToSign
+{
+  write("DistanceToSign: %f. ", $CommunicationObjects::ADASDisplayInfo.consumerSide[ADAS,CAMF].TrafficSignDetection.DetectedTrafficSign[1].DistanceToSign.phys);
+}

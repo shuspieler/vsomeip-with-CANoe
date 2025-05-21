@@ -1,0 +1,76 @@
+{
+    "unicast" : "2408:8806:53:3ae0:1042:6d3c:e8e0:6731",
+    "local_interface": "wlp0s20f3",
+    "logging" :
+    {
+        "level" : "trace",
+        "console" : "true",
+        "file" : { "enable" : "false", "path" : "/var/log/vsomeip.log" },
+        "dlt" : "false"
+    },
+    "applications" : 
+    [
+        {
+            "name" : "ADAS",
+            "id" : "0x101"
+        },
+        {
+            "name" : "CAMF",
+            "id" : "0x100"
+        }
+    ],
+    "service-discovery" :
+    {
+        "enable" : "true",
+        "multicast" : "FF02::1",
+        "port" : "30490",
+        "protocol" : "udp",
+        "initial_delay_min" : "50",
+        "initial_delay_max" : "200",
+        "repetitions_base_delay" : "500",
+        "repetitions_max" : "3",
+        "ttl" : "3",
+        "cyclic_offer_delay" : "5000",
+        "request_response_delay" : "2000"
+    },
+    "services" : [
+        {
+            "service" : "0x07d2",
+            "instance" : "0x0002",
+            "unreliable" : "30501",
+            "events" : [
+                {
+                    "event" : "0x64",
+                    "is_reliable" : "false",
+                    "cycle" : "1000"
+                }
+            ],
+            "eventgroups" : [
+                {
+                    "eventgroup" : "0x0001",
+                    "events" : ["0x64"],
+                    "is_reliable" : "false"
+                }
+            ]
+        },
+        {
+            "service" : "0x07d1",
+            "instance" : "0x0001",
+            "unreliable" : "30500",
+            "events" : [
+                {
+                    "event" : "0x8064",
+                    "is_reliable" : "false",
+                    "cycle" : "1000"
+                }
+            ],
+            "eventgroups" : [
+                {
+                    "eventgroup" : "0x0001",
+                    "events" : ["0x8064"],
+                    "is_reliable" : "false"
+                }
+            ]
+        }
+    ]
+}
